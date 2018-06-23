@@ -1,28 +1,51 @@
 package com.globomatics.bike.controller;
 
 import com.globomatics.bike.domain.Bike;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import com.globomatics.bike.repositories.BikeRepository;
+import com.globomatics.bike.services.NameService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/")
 public class BikeController {
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @Autowired
+    BikeRepository bikeRepository;
+
+    @Autowired
+    NameService nameService;
+
+    Bike bikeOne = new Bike("Ketler", "Germany", new BigDecimal("13222.1321323123213123213"), 12, 2017);
+
+
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     public List<Bike> bike(){
 
-        List<Bike> bikeList = new ArrayList<Bike>();
+        return bikeRepository.findAll();
 
-        Bike bikeOne = new Bike("Giant", "Poland", new BigDecimal("1234.8000000000000000000000"), 5, 2016);
+    }
 
-        bikeList.add(bikeOne);
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public Bike oneBike(@PathVariable("id") Long id){
+        return bikeRepository.getOne(id);
+    }
 
-        return bikeList;
 
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public void save(@RequestBody Bike bike){
+
+        bikeRepository.save(bike);
+
+    };
+
+    @RequestMapping(value = "/names", method = RequestMethod.GET)
+    public List<String> namesOnly(){
+        return nameService.getNamesOnly();
     }
 }

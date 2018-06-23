@@ -20,6 +20,9 @@ public class Bike {
     private int rating;
     private int year;
 
+    public Bike() {
+    }
+
     public Bike(String name, String country, BigDecimal price, int rating, int year) {
         this.name = name;
         this.country = country;
