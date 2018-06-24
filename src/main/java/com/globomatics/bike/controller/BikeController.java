@@ -1,5 +1,6 @@
 package com.globomatics.bike.controller;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.globomatics.bike.domain.Bike;
 import com.globomatics.bike.repositories.BikeRepository;
 import com.globomatics.bike.services.NameService;
@@ -42,7 +43,7 @@ public class BikeController {
 
         bikeRepository.save(bike);
 
-    };
+    }
 
     @RequestMapping(value = "/names", method = RequestMethod.GET)
     public List<String> namesOnly(){
