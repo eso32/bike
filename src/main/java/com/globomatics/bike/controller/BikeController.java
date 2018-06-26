@@ -2,6 +2,7 @@ package com.globomatics.bike.controller;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.globomatics.bike.domain.Bike;
+import com.globomatics.bike.domain.BikeDetails;
 import com.globomatics.bike.exceptions.BikeErrorResponse;
 import com.globomatics.bike.exceptions.BikeNotFoundException;
 import com.globomatics.bike.repositories.BikeRepository;
@@ -24,22 +25,25 @@ public class BikeController {
     @Autowired
     NameService nameService;
 
-    Bike bikeOne = new Bike("Ketler", "Germany", new BigDecimal("13222.1321323123213123213"), 12, 2017);
+
+    BikeDetails bikeDetails = new BikeDetails("Jakis tam opis", "Opinia1: Ten rower wymiata!");
+
+    Bike bikeOne = new Bike("Ketler", "Germany", new BigDecimal("13222.1321323123213123213"), 12, 2017, bikeDetails);
 
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public List<Bike> bike(){
-
+    public List<Bike> bike() {
+        bikeRepository.save(bikeOne);
         return bikeRepository.findAll();
 
     }
 
     @RequestMapping(value = "/bike/{id}", method = RequestMethod.GET)
-    public Bike oneBike(@PathVariable("id") Long id){
+    public Bike oneBike(@PathVariable("id") Long id) {
 
-        if( (id >= bikeRepository.findAll().size()) || (id < 0) ) {
+        if ((id >= bikeRepository.findAll().size()) || (id < 0)) {
             throw new BikeNotFoundException("Bike with id " + id + " can't be found");
-        } else if ( !(id instanceof Long) ) {
+        } else if (!(id instanceof Long)) {
             throw new BikeNotFoundException("Id must be an integer");
         }
 
@@ -60,14 +64,14 @@ public class BikeController {
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@RequestBody Bike bike){
+    public void save(@RequestBody Bike bike) {
 
         bikeRepository.save(bike);
 
     }
 
     @RequestMapping(value = "/names", method = RequestMethod.GET)
-    public List<String> namesOnly(){
+    public List<String> namesOnly() {
         return nameService.getNamesOnly();
     }
 }

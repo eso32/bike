@@ -1,9 +1,7 @@
 package com.globomatics.bike.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 
@@ -21,15 +19,20 @@ public class Bike {
     private int rating;
     private int year;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="detail_id")
+    private BikeDetails bikeDetails;
+
     public Bike() {
     }
 
-    public Bike(String name, String country, BigDecimal price, int rating, int year) {
+    public Bike(String name, String country, BigDecimal price, int rating, int year, BikeDetails bikeDetails) {
         this.name = name;
         this.country = country;
         this.price = price;
         this.rating = rating;
         this.year = year;
+        this.bikeDetails = bikeDetails;
     }
 
     public Long getId() {
@@ -78,5 +81,13 @@ public class Bike {
 
     public void setYear(int year) {
         this.year = year;
+    }
+
+    public BikeDetails getBikeDetails() {
+        return bikeDetails;
+    }
+
+    public void setBikeDetails(BikeDetails bikeDetails) {
+        this.bikeDetails = bikeDetails;
     }
 }
