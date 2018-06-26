@@ -2,10 +2,13 @@ package com.globomatics.bike.controller;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.globomatics.bike.domain.Bike;
+import com.globomatics.bike.exceptions.BikeErrorResponse;
+import com.globomatics.bike.exceptions.BikeNotFoundException;
 import com.globomatics.bike.repositories.BikeRepository;
 import com.globomatics.bike.services.NameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -31,9 +34,27 @@ public class BikeController {
 
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/bike/{id}", method = RequestMethod.GET)
     public Bike oneBike(@PathVariable("id") Long id){
+
+        if( (id >= bikeRepository.findAll().size()) || (id < 0) ) {
+            throw new BikeNotFoundException("Bike with id " + id + " can't be found");
+        } else if ( !(id instanceof Long) ) {
+            throw new BikeNotFoundException("Id must be an integer");
+        }
+
         return bikeRepository.getOne(id);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<BikeErrorResponse> handleException(BikeNotFoundException exception) {
+
+        BikeErrorResponse err = new BikeErrorResponse();
+        err.setStatus(HttpStatus.NOT_FOUND.value());
+        err.setMessage(exception.getMessage());
+        err.setTimeStamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(err, HttpStatus.NOT_FOUND);
     }
 
 
